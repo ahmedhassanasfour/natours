@@ -15,6 +15,7 @@ const xss = require('xss-clean');
 const hpp = require('hpp');
 const path = require('path');
 const cookieParser = require('cookie-parser');
+const compression = require('compression');
 
 app.use(cookieParser());
 
@@ -80,6 +81,8 @@ app.use(
     ],
   }),
 );
+
+app.use(compression());
 
 app.use(express.static(path.join(__dirname, 'public')));
 
