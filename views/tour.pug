@@ -1,0 +1,154 @@
+extends base
+
+block append head
+
+mixin overviewBox(label, text, icon)
+    .overview-box__detail
+        svg.overview-box__icon
+            use(xlink:href=`/img/icons.svg#icon-${icon}`)
+        span.overview-box__label= label
+        span.overview-box__text= text
+
+block content
+    section.section-header
+        .header__hero
+            .header__hero-overlay &nbsp;
+            img.header__hero-img(
+                src=`/img/tours/${tour.imageCover}`,
+                alt=`${tour.name} cover`
+            )
+
+        .heading-box
+            h1.heading-primary
+                span= tour.name
+
+            .heading-box__group
+                .heading-box__detail
+                    svg.heading-box__icon
+                        use(xlink:href='/img/icons.svg#icon-clock')
+                    span.heading-box__text= `${tour.duration} days`
+
+                .heading-box__detail
+                    svg.heading-box__icon
+                        use(xlink:href='/img/icons.svg#icon-map-pin')
+                    span.heading-box__text= tour.startLocation.description
+
+    section.section-description
+        .overview-box
+            .overview-box__group
+                h2.heading-secondary.ma-bt-lg Quick facts
+
+                +overviewBox(
+                    'Next date',
+                    tour.startDates[0].toLocaleString('en-US', {
+                        month: 'long',
+                        year: 'numeric'
+                    }),
+                    'calendar'
+                )
+
+                +overviewBox('Difficulty', tour.difficulty, 'trending-up')
+                +overviewBox('Participants', `${tour.maxGroupSize} people`, 'user')
+                +overviewBox('Rating', `${tour.ratingsAverage} / 5`, 'star')
+
+                h2.heading-secondary.ma-bt-lg Your tour guides
+
+                each guide in tour.guides
+                    .overview-box__detail
+                        img.overview-box__img(
+                            src=`/img/users/${guide.photo}`,
+                            alt=guide.name
+                        )
+                        if guide.role === 'lead-guide'
+                            span.overview-box__label Lead Guide
+                        else if guide.role === 'guide'
+                            span.overview-box__label Tour Guide
+                        span.overview-box__text= guide.name
+
+        .description-box
+            h2.heading-secondary.ma-bt-lg= `About ${tour.name} tour`
+            - const paragraphs = tour.description.split('\n');
+            each paragraph in paragraphs
+                p.description-box__text= paragraph
+
+    section.section-pictures
+        each img, i in tour.images
+            .picture-box
+                img.picture-box__img(
+                    class=`picture-box__img--${i + 1}`,
+                    src=`/img/tours/${img}`,
+                    alt=`${tour.name} ${i + 1}`
+                )
+
+    section.section-map
+        #map(data-locations=`${JSON.stringify(tour.locations)}`)
+
+    section.section-reviews
+        .reviews
+            each review in tour.reviews
+                .reviews__card
+                    .reviews__avatar
+                        img.reviews__avatar-img(
+                            src=`/img/users/${review.user[0].photo}`,
+                            alt=review.user[0].name
+                        )
+                        h6.reviews__user= review.user[0].name
+
+                    p.reviews__text= review.review
+
+                    .reviews__rating
+                        each star in [1, 2, 3, 4, 5]
+                            svg.reviews__star(class=star <= review.rating ? 'reviews__star--active' : '')
+                                use(xlink:href='/img/icons.svg#icon-star')
+
+        if user
+            .review-form
+                h2.heading-secondary.ma-bt-md() Add your review
+
+                form.form.form--review(data-tour-id=`${tour.id}`)
+                    .form__group
+                        label.form__label(for='rating') Rating
+                        select#rating.form__input(required)
+                            option(value='') Choose rating
+                            option(value='5') 5 ⭐
+                            option(value='4') 4 ⭐
+                            option(value='3') 3 ⭐
+                            option(value='2') 2 ⭐
+                            option(value='1') 1 ⭐
+
+                    .form__group
+                        label.form__label(for='review') Review
+                        textarea#review.form__input(
+                            rows='4',
+                            placeholder='Write your review...',
+                            required
+                        )
+
+                    .form__group
+                        button.btn.btn--green(type='submit') Submit Review
+        else
+            p(style='text-align:center') You must log in to add a review.
+
+    section.section-cta
+        .cta
+            .cta__img.cta__img--logo
+                img(src='/img/logo-white.png', alt='Natours logo')
+
+            img.cta__img.cta__img--1(
+                src=`/img/tours/${tour.images[1]}`,
+                alt=''
+            )
+            img.cta__img.cta__img--2(
+                src=`/img/tours/${tour.images[0]}`,
+                alt=''
+            )
+
+            .cta__content
+                h2.heading-secondary What are you waiting for?
+                p.cta__text
+                    #{tour.duration} days. 1 adventure. Infinite memories.
+
+                if user
+                    button.btn.btn--green.span-all-rows#book-tour(data-tour-id=`${tour.id}`) Book tour now!
+                else
+                    a.btn.btn--green.span-all-rows(href='/login') Log in to book tour
