@@ -4,6 +4,7 @@ import { signup } from './signup.js';
 import { updateSettings } from './updateSettings.js';
 import { bookTour } from './stripe.js';
 import { createReview } from './review.js';
+import { showAlert } from './alert.js';
 
 // DOM ELEMENTS
 // const mapbox = document.getElementById('map');
@@ -102,3 +103,6 @@ if (reviewForm) {
     createReview(tourId, rating, review);
   });
 }
+
+const alertMessage = document.querySelector('body').dataset.alert;
+if (alert) showAlert('success', alertMessage, 20);
