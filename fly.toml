@@ -1,10 +1,10 @@
-# fly.toml app configuration file generated for starter-late-voice-6689 on 2026-01-22T10:25:58+02:00
+# fly.toml app configuration file generated for natours-gsknha on 2026-03-11T19:06:33Z
 #
 # See https://fly.io/docs/reference/configuration/ for information about how to use this file.
 #
 
-app = 'starter-late-voice-6689'
-primary_region = 'cdg'
+app = 'natours-gsknha'
+primary_region = 'iad'
 
 [build]
 
